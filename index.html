@@ -2591,4 +2591,12 @@ async function loadPopular() {
       <span class="pop-rank ${i<3?'top':''}">#${i+1}</span>
       <span class="pop-cat-icon ${cat}">${catInfo.icon}</span>
       <span class="pop-q">${escHtmlPlain(q.substring(0,80))}</span>
-      <span class="pop-cou
+      <span class="pop-count">${count}x</span>
+    </div>`;
+  }).join('');
+}
+
+init();
+</script>
+</body>
+</html>
