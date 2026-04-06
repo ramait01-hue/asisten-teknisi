@@ -1617,9 +1617,20 @@ input[type=file]{display:none}
 // ===== CONFIG =====
 const SUPABASE_URL = 'https://trfcucgdhukbnpofpsnw.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZmN1Y2dkaHVrYm5wb2Zwc253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NTMyNjAsImV4cCI6MjA5MTAyOTI2MH0.8L2pnBcZqcsRTjC-DBUOBIAZDieubsQ62n6VyKGtLL0';
-const GEMINI_KEY = 'AIzaSyBz4SBdDUKIZreOcGpUTQ_8X2Do7SoWrDQ';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-const GEMINI_STREAM_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${GEMINI_KEY}`;
+const GEMINI_KEY_DEFAULT = 'AIzaSyBz4SBdDUKIZreOcGpUTQ_8X2Do7SoWrDQ';
+// Gunakan key dari admin panel jika tersedia, fallback ke default
+function getGeminiKey() {
+  return localStorage.getItem('tp-gemini-key') || GEMINI_KEY_DEFAULT;
+}
+function getGeminiModel() {
+  return localStorage.getItem('tp-ai-model') || 'gemini-2.0-flash';
+}
+function getGeminiUrl(stream = false) {
+  const key = getGeminiKey();
+  const model = getGeminiModel();
+  if (stream) return `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${key}`;
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+}
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -2168,7 +2179,7 @@ async function callGeminiStream(text, imgSnap, onChunk) {
 
   // Try streaming first
   try {
-    const res = await fetch(GEMINI_STREAM_URL, {
+    const res = await fetch(getGeminiUrl(true), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -2216,7 +2227,7 @@ async function callGeminiFallback(body, onChunk) {
   // Create fresh controller for fallback (old one may be in failed state)
   const fallbackController = new AbortController();
   abortController = fallbackController;
-  const res = await fetch(GEMINI_URL, {
+  const res = await fetch(getGeminiUrl(false), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
