@@ -628,6 +628,7 @@ footer p{font-size:12px;color:var(--text3)}
   display:flex;flex-direction:column;
   height:92vh;
   animation:chatSlide 0.3s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
 }
 @keyframes chatSlide{from{transform:translateY(48px);opacity:0}to{transform:none;opacity:1}}
 
@@ -794,6 +795,123 @@ footer p{font-size:12px;color:var(--text3)}
 .star:hover,.star.lit{filter:none;opacity:1}
 .star:hover{transform:scale(1.2)}
 .rated-ok{font-size:11px;color:var(--green);display:none}
+
+/* =========================================
+   STREAMING / STOP BUTTON
+   ========================================= */
+#stop-btn{
+  display:none;
+  padding:7px 16px;border-radius:20px;
+  background:rgba(248,113,113,0.12);
+  border:1px solid rgba(248,113,113,0.3);
+  color:var(--red);
+  font-size:12px;font-weight:700;
+  cursor:pointer;transition:var(--trans);
+  align-items:center;gap:6px;
+  flex-shrink:0;
+}
+#stop-btn:hover{background:rgba(248,113,113,0.2)}
+#stop-btn.visible{display:flex}
+
+/* Scroll-to-bottom */
+#scroll-btn{
+  display:none;
+  position:absolute;bottom:100px;right:20px;
+  width:36px;height:36px;border-radius:50%;
+  background:var(--bg4);border:1px solid var(--border2);
+  color:var(--text2);font-size:16px;
+  cursor:pointer;transition:var(--trans);
+  align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  z-index:10;
+}
+#scroll-btn.visible{display:flex}
+#scroll-btn:hover{background:var(--bg5);color:var(--text)}
+
+/* Context counter */
+.ctx-badge{
+  font-size:10px;font-weight:600;
+  padding:2px 8px;border-radius:20px;
+  background:var(--bg4);color:var(--text3);
+  border:1px solid var(--border);
+  display:none;flex-shrink:0;
+}
+.ctx-badge.show{display:inline-block}
+
+/* Streaming cursor blink */
+.stream-cursor{
+  display:inline-block;width:2px;height:14px;
+  background:var(--text2);margin-left:2px;
+  vertical-align:middle;
+  animation:cursorBlink 0.6s steps(1) infinite;
+}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Improved code blocks */
+.code-block{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-xs);
+  margin:8px 0;overflow:hidden;
+}
+.code-block-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg4);
+}
+.code-lang{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
+.code-copy{
+  font-size:10px;font-weight:600;
+  padding:2px 8px;border-radius:4px;
+  background:var(--bg5);border:1px solid var(--border2);
+  color:var(--text3);cursor:pointer;transition:var(--trans);
+}
+.code-copy:hover{color:var(--text);border-color:var(--border3)}
+.code-block pre{
+  padding:12px;margin:0;overflow-x:auto;
+  font-size:12px;font-family:monospace;line-height:1.6;
+  color:var(--text);
+}
+
+/* Retry button in error message */
+.retry-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:10px;padding:7px 16px;border-radius:20px;
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:var(--trans);
+}
+.retry-btn:hover{color:var(--text);border-color:var(--border3)}
+
+/* Regenerate action */
+.regen-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;
+  padding:4px 10px;border-radius:20px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text3);cursor:pointer;transition:var(--trans);
+}
+.regen-btn:hover{color:var(--text);border-color:var(--border2);background:var(--bg4)}
+
+/* History search */
+.hist-search{
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.hist-search input{
+  width:100%;background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:var(--radius-xs);
+  padding:8px 12px 8px 32px;
+  color:var(--text);font-family:var(--font-body);font-size:13px;
+  outline:none;transition:var(--trans);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237D8590' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:10px center;
+}
+.hist-search input:focus{border-color:rgba(245,200,66,0.4);background-color:var(--bg4)}
+.hist-search input::placeholder{color:var(--text3)}
 
 /* Typing indicator */
 .typing-row{align-self:flex-start}
@@ -1375,6 +1493,9 @@ input[type=file]{display:none}
         <button class="chat-btn modal-close" style="position:static" onclick="closeHistory()">✕</button>
       </div>
     </div>
+    <div class="hist-search">
+      <input type="text" id="hist-search-input" placeholder="Cari di riwayat..." oninput="searchHistory(this.value)"/>
+    </div>
     <div class="hist-filters">
       <button class="filter-btn active" data-filter="all" onclick="filterHistory(this,'all')">Semua</button>
       <button class="filter-btn" data-filter="elec" onclick="filterHistory(this,'elec')">⚡ Elektronik</button>
@@ -1410,7 +1531,7 @@ input[type=file]{display:none}
     <button class="modal-close" onclick="closeProfile()">✕</button>
     <div class="profile-avatar-big" id="profile-avatar-big">A</div>
     <div class="profile-name" id="profile-name">Nama User</div>
-    <div class="profile-email" id="profile-email">email@email.com</div>
+    <div class="profile-email" id="profile-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bdd8d0dcd4d1fdd8d0dcd4d193ded2d0">[email&#160;protected]</a></div>
     <div class="profile-stats" id="profile-stats">
       <div class="profile-stat"><div class="profile-stat-num" id="ps-elec">0</div><div class="profile-stat-label">Elektronik</div></div>
       <div class="profile-stat"><div class="profile-stat-num" id="ps-bengkel">0</div><div class="profile-stat-label">Bengkel</div></div>
@@ -1433,6 +1554,8 @@ input[type=file]{display:none}
         <div class="chat-status"><span class="dot"></span><span id="chat-hd-sub">Siap membantu</span></div>
       </div>
       <div class="chat-header-actions">
+        <span class="ctx-badge" id="ctx-badge">0 pesan</span>
+        <button id="stop-btn" onclick="stopGeneration()">⏹ Hentikan</button>
         <div style="position:relative">
           <button class="chat-btn" onclick="toggleExportMenu()" title="Ekspor chat" id="export-btn">📤</button>
           <div class="export-menu" id="export-menu">
@@ -1452,7 +1575,8 @@ input[type=file]{display:none}
       <div class="quick-row" id="quick-row"></div>
     </div>
 
-    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-msgs" id="chat-msgs" onscroll="onChatScroll()"></div>
+    <button id="scroll-btn" onclick="scrollToBottom()" title="Ke bawah">↓</button>
 
     <div class="input-area">
       <div class="img-preview" id="img-preview">
@@ -1489,12 +1613,13 @@ input[type=file]{display:none}
 <!-- =========================================
      SCRIPT
      ========================================= -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ===== CONFIG =====
 const SUPABASE_URL = 'https://trfcucgdhukbnpofpsnw.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZmN1Y2dkaHVrYm5wb2Zwc253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NTMyNjAsImV4cCI6MjA5MTAyOTI2MH0.8L2pnBcZqcsRTjC-DBUOBIAZDieubsQ62n6VyKGtLL0';
 const GEMINI_KEY = 'AIzaSyBz4SBdDUKIZreOcGpUTQ_8X2Do7SoWrDQ';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_STREAM_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${GEMINI_KEY}`;
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -1506,9 +1631,14 @@ let pendingImg = null;
 let authMode = 'login';
 let historyData = [];
 let histFilter = 'all';
+let histSearchQuery = '';
 let voiceRec = null;
 let isRecording = false;
 let sendLock = false;
+let abortController = null;
+let lastUserMsg = null;
+let lastUserImg = null;
+let chatDrafts = JSON.parse(localStorage.getItem('tp-drafts') || '{}');
 
 // ===== CATEGORIES CONFIG =====
 const CATS = {
@@ -1748,7 +1878,14 @@ function openChat(cat) {
   document.getElementById('chat-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   removeImg();
-  document.getElementById('chat-textarea').value = '';
+  // restore draft
+  const ta = document.getElementById('chat-textarea');
+  ta.value = chatDrafts[cat] || '';
+  ta.style.height = 'auto';
+  if (ta.value) { ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; }
+  updateCtxBadge();
+  // keyboard shortcut
+  document.addEventListener('keydown', onGlobalKey);
 }
 function appendWelcome(c) {
   const msgs = document.getElementById('chat-msgs');
@@ -1762,9 +1899,21 @@ function appendWelcome(c) {
   msgs.appendChild(d);
 }
 function closeChat() {
+  // save draft before closing
+  const ta = document.getElementById('chat-textarea');
+  if (ta.value.trim()) {
+    chatDrafts[currentCat] = ta.value;
+    localStorage.setItem('tp-drafts', JSON.stringify(chatDrafts));
+  } else {
+    delete chatDrafts[currentCat];
+    localStorage.setItem('tp-drafts', JSON.stringify(chatDrafts));
+  }
+  if (abortController) { abortController.abort(); abortController = null; }
   document.getElementById('chat-overlay').classList.remove('open');
   document.getElementById('export-menu').classList.remove('show');
+  document.getElementById('stop-btn').classList.remove('visible');
   document.body.style.overflow = '';
+  document.removeEventListener('keydown', onGlobalKey);
 }
 function handleChatOverlay(e) { if (e.target === document.getElementById('chat-overlay')) closeChat(); }
 function updateChatAuthUI() {
@@ -1787,6 +1936,9 @@ function onInputChange(el) {
   const cc = document.getElementById('char-count');
   if (len > 200) { cc.style.display = 'block'; cc.textContent = `${len} / 1000`; }
   else { cc.style.display = 'none'; }
+  // autosave draft
+  chatDrafts[currentCat] = el.value;
+  localStorage.setItem('tp-drafts', JSON.stringify(chatDrafts));
 }
 function handleFile(e) {
   const file = e.target.files[0]; if (!file) return;
@@ -1819,40 +1971,211 @@ function confirmClearChat() {
   }
 }
 
-// ===== SEND =====
-async function sendMsg() {
+// ===== SEND (STREAMING) =====
+async function sendMsg(retryText, retryImg) {
   if (sendLock) return;
   const ta = document.getElementById('chat-textarea');
   const btn = document.getElementById('send-btn');
-  const text = ta.value.trim();
-  if (!text && !pendingImg) return;
+  const text = retryText || ta.value.trim();
+  const imgSnap = retryImg || pendingImg;
+  if (!text && !imgSnap) return;
   const userText = text || '(Lihat foto terlampir)';
-  const imgSnap = pendingImg;
-  ta.value = ''; ta.style.height = 'auto';
-  document.getElementById('char-count').style.display = 'none';
-  removeImg(); btn.disabled = true; sendLock = true;
+  if (!retryText) {
+    ta.value = ''; ta.style.height = 'auto';
+    document.getElementById('char-count').style.display = 'none';
+    removeImg();
+  }
+  lastUserMsg = userText;
+  lastUserImg = imgSnap;
+  btn.disabled = true; sendLock = true;
   addUserMsg(userText, imgSnap?.preview);
   showTyping();
+  document.getElementById('stop-btn').classList.add('visible');
+  updateCtxBadge();
+
+  // Create AI message container
+  const msgs = document.getElementById('chat-msgs');
+  let aiEl = null;
+  let bubbleContentEl = null;
+  let streamedText = '';
+
   try {
-    const reply = await callGemini(userText, imgSnap);
+    streamedText = await callGeminiStream(userText, imgSnap, (chunk, accumulated) => {
+      if (!aiEl) {
+        hideTyping();
+        const c = CATS[currentCat];
+        aiEl = document.createElement('div');
+        aiEl.className = 'msg ai';
+        aiEl.innerHTML = `<div class="msg-meta"><span>${c.label}</span><span class="msg-time">${timeNow()}</span></div>
+        <div class="bubble"><div class="bubble-content"></div><span class="stream-cursor"></span></div>`;
+        msgs.appendChild(aiEl);
+      }
+      bubbleContentEl = aiEl.querySelector('.bubble-content');
+      bubbleContentEl.innerHTML = renderMarkdown(accumulated);
+      if (msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 200) {
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+    });
+
+    // Remove cursor
+    const cursor = aiEl?.querySelector('.stream-cursor');
+    if (cursor) cursor.remove();
+
+    document.getElementById('stop-btn').classList.remove('visible');
     hideTyping();
+
     let histId = null;
     if (currentUser) {
       const { data } = await sb.from('chat_history').insert({
         user_id: currentUser.id, category: currentCat,
-        question: userText.substring(0, 500), answer: reply.substring(0, 2000)
+        question: userText.substring(0, 500), answer: streamedText.substring(0, 2000)
       }).select('id').single();
       histId = data?.id || null;
     }
-    addAIMsg(reply, histId);
-    messages.push({ role: 'user', text: userText }, { role: 'ai', text: reply });
+    // Add action buttons to finished AI message
+    if (aiEl) {
+      if (histId) aiEl.dataset.id = histId;
+      const bubble = aiEl.querySelector('.bubble');
+      const ratingHtml = histId && currentUser ? `
+        <div class="rating-wrap">
+          <span class="rating-label">Membantu?</span>
+          <div class="stars">${[1,2,3,4,5].map(n=>`<span class="star" onclick="rateMsg('${histId}',${n},this)" data-v="${n}">⭐</span>`).join('')}</div>
+          <span class="rated-ok" id="rated-${histId}">✓ Terima kasih!</span>
+        </div>` : '';
+      bubble.insertAdjacentHTML('beforeend', `
+        <div class="msg-actions">
+          <button class="msg-action-btn" onclick="copyMsg(this)">📋 Salin</button>
+          <button class="regen-btn" onclick="regenerate()">↻ Ulangi</button>
+          ${ratingHtml}
+        </div>`);
+    }
+
+    messages.push({ role: 'user', text: userText }, { role: 'ai', text: streamedText });
+    updateCtxBadge();
     loadStats(); loadPopular();
+
   } catch(e) {
+    document.getElementById('stop-btn').classList.remove('visible');
     hideTyping();
-    addAIMsg('Maaf, terjadi gangguan koneksi. Silakan coba lagi. 🔄');
-    console.error(e);
+
+    if (e.name === 'AbortError') {
+      // User stopped — keep partial response, add actions
+      if (aiEl) {
+        const cursor = aiEl.querySelector('.stream-cursor');
+        if (cursor) cursor.remove();
+        const bubble = aiEl.querySelector('.bubble');
+        bubble.insertAdjacentHTML('beforeend', `
+          <div class="msg-actions" style="border-top:1px solid var(--border);padding-top:8px;margin-top:8px">
+            <span style="font-size:11px;color:var(--text3)">⏹ Dihentikan</span>
+            <button class="msg-action-btn" onclick="copyMsg(this)">📋 Salin</button>
+            <button class="regen-btn" onclick="regenerate()">↻ Ulangi</button>
+          </div>`);
+        if (streamedText) messages.push({ role: 'user', text: userText }, { role: 'ai', text: streamedText });
+      }
+    } else {
+      // Error — show with retry button
+      const errEl = document.createElement('div');
+      errEl.className = 'msg ai';
+      const c = CATS[currentCat];
+      errEl.innerHTML = `<div class="msg-meta"><span>${c.label}</span><span class="msg-time">${timeNow()}</span></div>
+      <div class="bubble">
+        <p style="color:var(--red)">⚠️ Terjadi gangguan koneksi. Silakan coba lagi.</p>
+        <button class="retry-btn" onclick="retryLast()">🔄 Coba lagi</button>
+      </div>`;
+      msgs.appendChild(errEl);
+      console.error(e);
+    }
   }
+
   btn.disabled = false; sendLock = false;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function stopGeneration() {
+  if (abortController) {
+    abortController.abort();
+    abortController = null;
+  }
+  document.getElementById('stop-btn').classList.remove('visible');
+}
+
+function regenerate() {
+  if (!lastUserMsg) return;
+  // Remove last AI response (and possibly last user message too for clean regenerate)
+  const msgs = document.getElementById('chat-msgs');
+  const allMsgs = msgs.querySelectorAll('.msg');
+  if (allMsgs.length >= 2) {
+    const last = allMsgs[allMsgs.length - 1];
+    if (last.classList.contains('ai')) last.remove();
+  }
+  messages = messages.slice(0, -2); // remove last user+ai pair
+  // re-send
+  sendMsg(lastUserMsg, lastUserImg);
+}
+
+function retryLast() {
+  const msgs = document.getElementById('chat-msgs');
+  const errMsg = msgs.querySelector('.msg.ai:last-child');
+  if (errMsg) errMsg.remove();
+  sendMsg(lastUserMsg, lastUserImg);
+}
+
+// Streaming Gemini call
+async function callGeminiStream(text, imgSnap, onChunk) {
+  abortController = new AbortController();
+  const c = CATS[currentCat];
+  const saved = JSON.parse(localStorage.getItem('tp-prompts') || 'null');
+  const systemText = saved?.[currentCat] || c.system;
+  const parts = [];
+  if (imgSnap) parts.push({ inline_data: { mime_type: imgSnap.type, data: imgSnap.base64 } });
+  parts.push({ text });
+  const history = messages.slice(-8).map(m => ({
+    role: m.role === 'ai' ? 'model' : 'user',
+    parts: [{ text: m.text }]
+  }));
+  const body = {
+    system_instruction: { parts: [{ text: systemText }] },
+    contents: [...history, { role: 'user', parts }],
+    generationConfig: {
+      maxOutputTokens: parseInt(localStorage.getItem('tp-ai-tokens') || '1500'),
+      temperature: parseFloat(localStorage.getItem('tp-ai-temp') || '0.7')
+    }
+  };
+  const res = await fetch(GEMINI_STREAM_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    signal: abortController.signal
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${res.status}`);
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let fullText = '';
+  let buffer = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop(); // keep incomplete line
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const json = line.slice(6).trim();
+      if (!json || json === '[DONE]') continue;
+      try {
+        const data = JSON.parse(json);
+        const chunk = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (chunk) {
+          fullText += chunk;
+          onChunk(chunk, fullText);
+        }
+      } catch(e) {}
+    }
+  }
+  return fullText || 'Maaf, tidak ada respons dari AI.';
 }
 
 function addUserMsg(text, imgSrc) {
@@ -1900,51 +2223,82 @@ function showTyping() {
 }
 function hideTyping() { const t = document.getElementById('typing-row'); if (t) t.remove(); }
 
-// Markdown renderer
-function renderMarkdown(text) {
-  return text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g,'<em>$1</em>')
-    .replace(/`([^`]+)`/g,'<code>$1</code>')
-    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
-    .replace(/^• (.+)$/gm,'<li>$1</li>')
-    .replace(/^- (.+)$/gm,'<li>$1</li>')
-    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/gs, m => `<ul>${m}</ul>`)
-    .replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>')
-    .replace(/⚠️ \*\*PERHATIAN:\*\* (.+)/g, '<div class="safety-notice"><span class="icon">⚠️</span><span>$1</span></div>')
-    .replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')
-    .replace(/^(?!<[hou]|<li|<bl|<div)(.+)$/gm, '<p>$1</p>');
+// Improved Markdown renderer with code blocks + copy
+function renderMarkdown(raw) {
+  // 1. Extract and replace fenced code blocks first (before HTML escaping other content)
+  const codeBlocks = [];
+  let text = raw.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push({ lang: lang || 'code', code });
+    return `\x00CODEBLOCK${idx}\x00`;
+  });
+
+  // 2. Escape HTML
+  text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // 3. Inline code
+  text = text.replace(/`([^`]+)`/g,'<code>$1</code>');
+
+  // 4. Bold / italic
+  text = text.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
+  text = text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  text = text.replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+
+  // 5. Headings
+  text = text.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  text = text.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+
+  // 6. Safety notice (special)
+  text = text.replace(/⚠️ \*\*PERHATIAN:\*\* (.+)/g,
+    '<div class="safety-notice"><span class="icon">⚠️</span><span>$1</span></div>');
+  text = text.replace(/⚠️ PERHATIAN: (.+)/g,
+    '<div class="safety-notice"><span class="icon">⚠️</span><span>$1</span></div>');
+
+  // 7. Blockquote
+  text = text.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
+
+  // 8. Lists — group consecutive list items
+  text = text.replace(/^[•\-\*] (.+)$/gm, '<li>$1</li>');
+  text = text.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  text = text.replace(/(<li>[\s\S]*?<\/li>)(\n|$)/g, '$1');
+  text = text.replace(/(<li>[\s\S]+?)(?=<h[23]>|<div|<blockquote>|$)/g, '<ul>$1</ul>');
+
+  // 9. Paragraphs (double newlines)
+  text = text.split(/\n{2,}/).map(para => {
+    para = para.trim();
+    if (!para) return '';
+    if (/^<(h[23]|ul|ol|li|blockquote|div|pre)/.test(para)) return para;
+    return `<p>${para.replace(/\n/g,'<br>')}</p>`;
+  }).filter(Boolean).join('\n');
+
+  // 10. Re-insert code blocks
+  text = text.replace(/\x00CODEBLOCK(\d+)\x00/g, (_, idx) => {
+    const { lang, code } = codeBlocks[parseInt(idx)];
+    const safeCode = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const escapedCode = code.replace(/`/g,'\\`').replace(/\\/g,'\\\\').replace(/\$/g,'\\$');
+    return `<div class="code-block">
+      <div class="code-block-head">
+        <span class="code-lang">${lang}</span>
+        <button class="code-copy" onclick="copyCode(this,\`${escapedCode}\`)">Salin</button>
+      </div>
+      <pre>${safeCode}</pre>
+    </div>`;
+  });
+
+  return text;
 }
+
+function copyCode(btn, code) {
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Tersalin!';
+    setTimeout(() => btn.textContent = 'Salin', 2000);
+  });
+}
+
 function escHtml(t) {
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
 
-async function callGemini(text, imgSnap) {
-  const c = CATS[currentCat];
-  const parts = [];
-  if (imgSnap) parts.push({ inline_data: { mime_type: imgSnap.type, data: imgSnap.base64 } });
-  parts.push({ text });
-  const history = messages.slice(-8).map(m => ({
-    role: m.role === 'ai' ? 'model' : 'user',
-    parts: [{ text: m.text }]
-  }));
-  const body = {
-    system_instruction: { parts: [{ text: c.system }] },
-    contents: [...history, { role: 'user', parts }],
-    generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
-  };
-  const res = await fetch(GEMINI_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || 'Maaf, tidak ada respons.';
-}
 
 function copyMsg(btn) {
   const bubble = btn.closest('.bubble');
@@ -2084,26 +2438,38 @@ function filterHistory(btn, filter) {
   });
   btn.classList.add('active');
   if (filter !== 'all') btn.classList.add(filter);
-  renderHistory(filter);
+  renderHistory();
 }
-function renderHistory(filter) {
-  const filtered = filter === 'all' ? historyData : historyData.filter(h => h.category === filter);
+function searchHistory(q) {
+  histSearchQuery = q.toLowerCase();
+  renderHistory();
+}
+function renderHistory() {
+  let filtered = histFilter === 'all' ? historyData : historyData.filter(h => h.category === histFilter);
+  if (histSearchQuery) {
+    filtered = filtered.filter(h =>
+      h.question.toLowerCase().includes(histSearchQuery) ||
+      h.answer.toLowerCase().includes(histSearchQuery)
+    );
+  }
   const body = document.getElementById('hist-body');
   if (!filtered.length) {
-    body.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div>Tidak ada riwayat untuk kategori ini.</div>';
+    body.innerHTML = `<div class="empty-state"><div class="empty-icon">${histSearchQuery ? '🔍' : '📭'}</div>${histSearchQuery ? 'Tidak ada hasil untuk "' + escHtmlPlain(histSearchQuery) + '"' : 'Tidak ada riwayat untuk kategori ini.'}</div>`;
     return;
   }
   body.innerHTML = filtered.map(h => {
     const cat = CATS[h.category] || CATS.elec;
     const date = new Date(h.created_at).toLocaleDateString('id-ID', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
     const stars = h.rating ? '⭐'.repeat(h.rating) : '';
+    const q = histSearchQuery ? highlight(h.question.substring(0,100), histSearchQuery) : escHtmlPlain(h.question.substring(0,100));
+    const a = histSearchQuery ? highlight(h.answer.substring(0,200), histSearchQuery) : escHtmlPlain(h.answer.substring(0,200));
     return `<div class="hist-card" data-id="${h.id}">
       <div class="hist-card-top">
         <span class="hist-cat-tag ${h.category}">${cat.icon} ${cat.label}</span>
         <span class="hist-date">${date}</span>
       </div>
-      <div class="hist-q">${escHtmlPlain(h.question.substring(0,100))}</div>
-      <div class="hist-a">${escHtmlPlain(h.answer.substring(0,200))}</div>
+      <div class="hist-q">${q}</div>
+      <div class="hist-a">${a}</div>
       <div class="hist-footer">
         ${stars ? `<span class="hist-rating">${stars}</span>` : ''}
         <button class="hist-delete" onclick="deleteHist(event,'${h.id}')">Hapus</button>
@@ -2111,6 +2477,11 @@ function renderHistory(filter) {
       </div>
     </div>`;
   }).join('');
+}
+function highlight(text, query) {
+  const safe = escHtmlPlain(text);
+  const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return safe.replace(re, '<mark style="background:rgba(245,200,66,0.3);border-radius:2px;padding:0 2px">$1</mark>');
 }
 function escHtmlPlain(t) {
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -2120,7 +2491,7 @@ async function deleteHist(e, id) {
   if (!confirm('Hapus riwayat ini?')) return;
   await sb.from('chat_history').delete().eq('id', id).eq('user_id', currentUser.id);
   historyData = historyData.filter(h => h.id !== id);
-  renderHistory(histFilter);
+  renderHistory();
   toast('Riwayat dihapus', 'info');
 }
 function replayHist(h) {
@@ -2130,6 +2501,7 @@ function replayHist(h) {
     addUserMsg(h.question);
     addAIMsg(h.answer, null);
     messages = [{ role: 'user', text: h.question }, { role: 'ai', text: h.answer }];
+    updateCtxBadge();
   }, 350);
 }
 
@@ -2142,6 +2514,40 @@ async function loadStats() {
   document.getElementById('stat-elec').textContent = c.elec || '0';
   document.getElementById('stat-bengkel').textContent = c.bengkel || '0';
   document.getElementById('stat-desain').textContent = c.desain || '0';
+}
+
+// ===== CTX / SCROLL / KEYBOARD HELPERS =====
+function updateCtxBadge() {
+  const badge = document.getElementById('ctx-badge');
+  if (!badge) return;
+  const ctx = Math.floor(messages.length / 2);
+  if (ctx > 0) {
+    badge.textContent = `${ctx} pesan dalam konteks`;
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
+}
+
+function onChatScroll() {
+  const msgs = document.getElementById('chat-msgs');
+  const btn = document.getElementById('scroll-btn');
+  const distFromBottom = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight;
+  btn.classList.toggle('visible', distFromBottom > 150);
+}
+
+function scrollToBottom() {
+  const msgs = document.getElementById('chat-msgs');
+  msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
+}
+
+function onGlobalKey(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('chat-overlay').classList.contains('open')) closeChat();
+    else if (document.getElementById('hist-overlay').classList.contains('open')) closeHistory();
+    else if (document.getElementById('auth-overlay').classList.contains('open')) closeAuth();
+    else if (document.getElementById('profile-overlay').classList.contains('open')) closeProfile();
+  }
 }
 
 // ===== POPULAR =====
@@ -2163,19 +2569,4 @@ async function loadPopular() {
       <span class="pop-rank ${i<3?'top':''}">#${i+1}</span>
       <span class="pop-cat-icon ${cat}">${catInfo.icon}</span>
       <span class="pop-q">${escHtmlPlain(q.substring(0,80))}</span>
-      <span class="pop-count">${count}×</span>
-    </div>`;
-  }).join('');
-}
-
-// ===== FAQ =====
-function toggleFaq(el) {
-  const item = el.closest('.faq-item');
-  item.classList.toggle('open');
-}
-
-// ===== RUN =====
-init();
-</script>
-</body>
-</html>
+      <span class="pop-cou
