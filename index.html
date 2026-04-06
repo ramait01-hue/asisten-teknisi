@@ -1613,7 +1613,7 @@ input[type=file]{display:none}
 <!-- =========================================
      SCRIPT
      ========================================= -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ===== CONFIG =====
 const SUPABASE_URL = 'https://trfcucgdhukbnpofpsnw.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZmN1Y2dkaHVrYm5wb2Zwc253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NTMyNjAsImV4cCI6MjA5MTAyOTI2MH0.8L2pnBcZqcsRTjC-DBUOBIAZDieubsQ62n6VyKGtLL0';
@@ -1723,19 +1723,41 @@ applyTheme(currentTheme);
 
 // ===== INIT =====
 async function init() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) currentUser = session.user;
-  renderNav();
-  loadStats();
-  loadPopular();
-  document.getElementById('app-loading').classList.add('hide');
+  // Always hide loader — regardless of what happens
+  const hideLoader = () => {
+    const el = document.getElementById('app-loading');
+    if (el) el.classList.add('hide');
+  };
 
-  sb.auth.onAuthStateChange((event, session) => {
-    currentUser = session?.user || null;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) currentUser = session.user;
     renderNav();
-    updateChatAuthUI();
-  });
+    // Non-critical — run in background, don't block
+    loadStats().catch(() => {});
+    loadPopular().catch(() => {});
+    hideLoader();
+
+    sb.auth.onAuthStateChange((event, session) => {
+      currentUser = session?.user || null;
+      renderNav();
+      updateChatAuthUI();
+    });
+  } catch (e) {
+    console.error('Init error:', e);
+    hideLoader();
+    // Still functional — just no auth state
+    renderNav();
+    loadStats().catch(() => {});
+    loadPopular().catch(() => {});
+  }
 }
+
+// Fallback: hide loader after 5s no matter what
+setTimeout(() => {
+  const el = document.getElementById('app-loading');
+  if (el && !el.classList.contains('hide')) el.classList.add('hide');
+}, 5000);
 
 // ===== TOAST =====
 function toast(msg, type = 'info') {
