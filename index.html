@@ -2095,17 +2095,19 @@ async function sendMsg(retryText, retryImg) {
         if (streamedText) messages.push({ role: 'user', text: userText }, { role: 'ai', text: streamedText });
       }
     } else {
-      // Error — show with retry button
+      // Error — show actual error detail + retry button
       const errEl = document.createElement('div');
       errEl.className = 'msg ai';
       const c = CATS[currentCat];
+      const errMsg = e.message || String(e);
+      console.error('Gemini error:', e);
       errEl.innerHTML = `<div class="msg-meta"><span>${c.label}</span><span class="msg-time">${timeNow()}</span></div>
       <div class="bubble">
-        <p style="color:var(--red)">⚠️ Terjadi gangguan koneksi. Silakan coba lagi.</p>
+        <p style="color:var(--red);margin-bottom:6px">⚠️ Gagal menghubungi AI</p>
+        <p style="font-size:12px;color:var(--text3);background:var(--bg3);padding:8px;border-radius:6px;font-family:monospace;word-break:break-all">${escHtml(errMsg)}</p>
         <button class="retry-btn" onclick="retryLast()">🔄 Coba lagi</button>
       </div>`;
       msgs.appendChild(errEl);
-      console.error(e);
     }
   }
 
@@ -2211,22 +2213,30 @@ async function callGeminiStream(text, imgSnap, onChunk) {
 
 // Non-streaming fallback
 async function callGeminiFallback(body, onChunk) {
+  // Create fresh controller for fallback (old one may be in failed state)
+  const fallbackController = new AbortController();
+  abortController = fallbackController;
   const res = await fetch(GEMINI_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
-    signal: abortController?.signal
+    signal: fallbackController.signal
   });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error?.message || `HTTP ${res.status} ${res.statusText}`);
+  }
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
   const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || 'Maaf, tidak ada respons.';
-  // Simulate streaming char by char for consistent UX
+  // Simulate streaming for consistent UX
   let accumulated = '';
-  const chunks = text.match(/.{1,30}/g) || [text];
+  const chunks = text.match(/.{1,40}/g) || [text];
   for (const chunk of chunks) {
+    if (fallbackController.signal.aborted) break;
     accumulated += chunk;
     onChunk(chunk, accumulated);
-    await new Promise(r => setTimeout(r, 15));
+    await new Promise(r => setTimeout(r, 12));
   }
   return text;
 }
