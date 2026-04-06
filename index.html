@@ -2142,7 +2142,7 @@ function retryLast() {
   sendMsg(lastUserMsg, lastUserImg);
 }
 
-// Streaming Gemini call
+// Streaming Gemini call with non-streaming fallback
 async function callGeminiStream(text, imgSnap, onChunk) {
   abortController = new AbortController();
   const c = CATS[currentCat];
@@ -2163,41 +2163,72 @@ async function callGeminiStream(text, imgSnap, onChunk) {
       temperature: parseFloat(localStorage.getItem('tp-ai-temp') || '0.7')
     }
   };
-  const res = await fetch(GEMINI_STREAM_URL, {
+
+  // Try streaming first
+  try {
+    const res = await fetch(GEMINI_STREAM_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: abortController.signal
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+    if (!res.body) throw new Error('no-stream');
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const json = line.slice(6).trim();
+        if (!json || json === '[DONE]') continue;
+        try {
+          const data = JSON.parse(json);
+          const chunk = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          if (chunk) { fullText += chunk; onChunk(chunk, fullText); }
+        } catch(e) {}
+      }
+    }
+    return fullText || 'Maaf, tidak ada respons dari AI.';
+
+  } catch(e) {
+    if (e.name === 'AbortError') throw e; // user stopped — rethrow
+    // Streaming failed — fallback to regular endpoint
+    console.warn('Streaming gagal, fallback ke non-streaming:', e.message);
+    return await callGeminiFallback(body, onChunk);
+  }
+}
+
+// Non-streaming fallback
+async function callGeminiFallback(body, onChunk) {
+  const res = await fetch(GEMINI_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
-    signal: abortController.signal
+    signal: abortController?.signal
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `HTTP ${res.status}`);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || 'Maaf, tidak ada respons.';
+  // Simulate streaming char by char for consistent UX
+  let accumulated = '';
+  const chunks = text.match(/.{1,30}/g) || [text];
+  for (const chunk of chunks) {
+    accumulated += chunk;
+    onChunk(chunk, accumulated);
+    await new Promise(r => setTimeout(r, 15));
   }
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let fullText = '';
-  let buffer = '';
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop(); // keep incomplete line
-    for (const line of lines) {
-      if (!line.startsWith('data: ')) continue;
-      const json = line.slice(6).trim();
-      if (!json || json === '[DONE]') continue;
-      try {
-        const data = JSON.parse(json);
-        const chunk = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        if (chunk) {
-          fullText += chunk;
-          onChunk(chunk, fullText);
-        }
-      } catch(e) {}
-    }
-  }
-  return fullText || 'Maaf, tidak ada respons dari AI.';
+  return text;
 }
 
 function addUserMsg(text, imgSrc) {
