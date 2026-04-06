@@ -4,59 +4,84 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TeknisPro — Asisten Teknis AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --bg: #0f0f0f;
-  --bg2: #161616;
-  --bg3: #1e1e1e;
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.15);
+  --bg: #0a0a0a;
+  --bg2: #111111;
+  --bg3: #1a1a1a;
+  --bg4: #222222;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
   --text: #f0ede8;
-  --text2: #9a9690;
-  --text3: #5a5752;
+  --text2: #8a8680;
+  --text3: #4a4744;
   --elec: #f5c842;
-  --elec2: #2a2200;
+  --elec2: #1e1700;
   --bengkel: #f07840;
-  --bengkel2: #2a1200;
+  --bengkel2: #1e0e00;
   --desain: #7c6ef5;
-  --desain2: #120f2a;
+  --desain2: #0e0c1e;
   --green: #4ade80;
-  --radius: 12px;
+  --red: #f87171;
+  --radius: 14px;
   --radius2: 8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
-h1,h2,h3,h4{font-family:'Syne',sans-serif}
+h1,h2,h3,h4,button.syne{font-family:'Syne',sans-serif}
+a{color:inherit;text-decoration:none}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(12px)}
-.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.5px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;background:rgba(10,10,10,0.94);backdrop-filter:blur(16px)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.5px;cursor:pointer}
 .logo span{color:var(--elec)}
+.nav-right{display:flex;align-items:center;gap:10px}
 .nav-badge{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--text2)}
+.btn-auth{font-family:'Syne',sans-serif;font-weight:600;font-size:13px;padding:8px 18px;border-radius:var(--radius2);border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;transition:all .2s}
+.btn-auth:hover{background:var(--bg3);border-color:var(--text3)}
+.btn-auth.primary{background:var(--elec);color:#000;border-color:var(--elec)}
+.btn-auth.primary:hover{opacity:.9}
+.user-info{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--elec);font-family:'Syne',sans-serif}
 
 /* HERO */
-.hero{padding:80px 32px 60px;max-width:860px;margin:0 auto;text-align:center}
+.hero{padding:80px 32px 56px;max-width:860px;margin:0 auto;text-align:center}
 .hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 14px;border-radius:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);margin-bottom:28px}
 .hero-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(36px,6vw,64px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:20px}
+.hero h1{font-size:clamp(36px,6vw,60px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:20px}
 .hero h1 em{font-style:normal;color:var(--elec)}
 .hero p{font-size:16px;color:var(--text2);line-height:1.7;max-width:500px;margin:0 auto 40px}
 .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .btn-primary{padding:12px 28px;border-radius:var(--radius2);background:var(--elec);color:#000;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:all .2s}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,200,66,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,200,66,.25)}
 .btn-ghost{padding:12px 28px;border-radius:var(--radius2);background:transparent;color:var(--text);font-family:'Syne',sans-serif;font-weight:600;font-size:14px;border:1px solid var(--border2);cursor:pointer;transition:all .2s}
-.btn-ghost:hover{background:var(--bg3);border-color:var(--text3)}
+.btn-ghost:hover{background:var(--bg3)}
 
-/* KATEGORI CARDS */
-.categories{padding:0 24px 60px;max-width:1100px;margin:0 auto}
+/* STATS BAR */
+.stats-bar{max-width:1100px;margin:0 auto 48px;padding:0 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;text-align:center}
+.stat-card .num{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px}
+.stat-card .num.elec{color:var(--elec)}
+.stat-card .num.bengkel{color:var(--bengkel)}
+.stat-card .num.desain{color:var(--desain)}
+.stat-card .lbl{font-size:12px;color:var(--text2)}
+
+/* CATEGORIES */
+.categories{padding:0 24px 56px;max-width:1100px;margin:0 auto}
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .cat-card{border-radius:var(--radius);border:1px solid var(--border);background:var(--bg2);overflow:hidden;cursor:pointer;transition:all .25s;position:relative}
-.cat-card:hover{transform:translateY(-4px);border-color:var(--border2)}
-.cat-card.elec:hover{border-color:var(--elec);box-shadow:0 0 32px rgba(245,200,66,.1)}
-.cat-card.bengkel:hover{border-color:var(--bengkel);box-shadow:0 0 32px rgba(240,120,64,.1)}
-.cat-card.desain:hover{border-color:var(--desain);box-shadow:0 0 32px rgba(124,110,245,.1)}
+.cat-card:hover{transform:translateY(-4px)}
+.cat-card.elec:hover{border-color:rgba(245,200,66,.4);box-shadow:0 0 40px rgba(245,200,66,.08)}
+.cat-card.bengkel:hover{border-color:rgba(240,120,64,.4);box-shadow:0 0 40px rgba(240,120,64,.08)}
+.cat-card.desain:hover{border-color:rgba(124,110,245,.4);box-shadow:0 0 40px rgba(124,110,245,.08)}
 .cat-header{padding:28px 28px 20px;display:flex;align-items:flex-start;gap:16px}
 .cat-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .elec .cat-icon{background:var(--elec2);color:var(--elec)}
@@ -67,78 +92,31 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 3
 .cat-topics{padding:0 28px 20px;display:flex;flex-wrap:wrap;gap:6px}
 .topic{font-size:11px;padding:4px 10px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
 .cat-action{padding:16px 28px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.cat-action span{font-size:13px;font-weight:500}
+.cat-action span{font-size:13px;font-weight:600;font-family:'Syne',sans-serif}
 .elec .cat-action span{color:var(--elec)}
 .bengkel .cat-action span{color:var(--bengkel)}
 .desain .cat-action span{color:var(--desain)}
 .arrow{font-size:18px;transition:transform .2s}
-.cat-card:hover .arrow{transform:translateX(4px)}
+.cat-card:hover .arrow{transform:translateX(5px)}
 
-/* CHAT MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;align-items:flex-end;justify-content:center}
-.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{width:100%;max-width:680px;background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;border:1px solid var(--border);border-bottom:none;display:flex;flex-direction:column;height:90vh;animation:slideUp .25s ease}
-@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
-.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0}
-.modal-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.modal-title{flex:1}
-.modal-title h3{font-size:15px;font-weight:700;margin-bottom:2px}
-.modal-title p{font-size:12px;color:var(--text2)}
-.close-btn{width:32px;height:32px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s}
-.close-btn:hover{background:var(--border);color:var(--text)}
+/* POPULAR QUESTIONS */
+.popular-section{padding:0 24px 56px;max-width:860px;margin:0 auto}
+.section-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px}
+.section-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+.popular-list{display:flex;flex-direction:column;gap:8px}
+.popular-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);cursor:pointer;transition:all .15s}
+.popular-item:hover{border-color:var(--border2);background:var(--bg3)}
+.pop-rank{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;width:20px;color:var(--text3)}
+.pop-cat{font-size:11px;padding:3px 8px;border-radius:20px;flex-shrink:0}
+.pop-cat.elec{background:var(--elec2);color:var(--elec)}
+.pop-cat.bengkel{background:var(--bengkel2);color:var(--bengkel)}
+.pop-cat.desain{background:var(--desain2);color:var(--desain)}
+.pop-q{font-size:13px;flex:1;color:var(--text)}
+.pop-count{font-size:11px;color:var(--text3)}
 
-/* Quick questions */
-.quick-area{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
-.quick-label{font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
-.quick-btns{display:flex;flex-wrap:wrap;gap:6px}
-.quick-btn{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
-.quick-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg)}
-
-/* Chat area */
-.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
-.chat-messages::-webkit-scrollbar{width:4px}
-.chat-messages::-webkit-scrollbar-track{background:transparent}
-.chat-messages::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
-.msg{max-width:85%;animation:msgIn .2s ease}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.msg.user{align-self:flex-end}
-.msg.user .bubble{background:var(--bg3);border:1px solid var(--border2);border-radius:12px 12px 4px 12px;padding:10px 14px;font-size:14px;line-height:1.6}
-.msg.ai{align-self:flex-start}
-.msg.ai .bubble{background:var(--bg);border:1px solid var(--border);border-radius:4px 12px 12px 12px;padding:10px 14px;font-size:14px;line-height:1.7;color:var(--text)}
-.msg .meta{font-size:11px;color:var(--text3);margin-bottom:4px;padding:0 2px}
-.msg img{max-width:100%;max-height:180px;object-fit:cover;border-radius:8px;display:block;margin-top:8px}
-.typing{display:flex;gap:5px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:4px 12px 12px 12px;width:fit-content}
-.typing span{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:typing 1.2s infinite}
-.typing span:nth-child(2){animation-delay:.2s}
-.typing span:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,80%,100%{transform:scale(1);opacity:.4}40%{transform:scale(1.2);opacity:1}}
-
-/* Input area */
-.input-area{padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0}
-.input-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .15s}
-.input-wrap:focus-within{border-color:var(--border2)}
-.preview-bar{display:none;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
-.preview-bar.show{display:flex}
-.preview-bar img{height:36px;width:36px;object-fit:cover;border-radius:6px}
-.preview-bar span{font-size:12px;color:var(--text2);flex:1}
-.preview-bar button{font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer}
-.preview-bar button:hover{color:var(--text);border-color:var(--text3)}
-.input-row{display:flex;align-items:flex-end;gap:4px}
-.attach-btn{padding:10px 12px;background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;transition:color .15s;flex-shrink:0}
-.attach-btn:hover{color:var(--text)}
-textarea.chat-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 4px;resize:none;min-height:42px;max-height:120px;line-height:1.5}
-textarea.chat-input::placeholder{color:var(--text3)}
-.send-btn{padding:8px 14px;margin:6px 8px;border-radius:var(--radius2);background:var(--elec);color:#000;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;border:none;cursor:pointer;transition:all .15s;flex-shrink:0}
-.send-btn:hover{opacity:.9}
-.send-btn:disabled{opacity:.3;cursor:not-allowed}
-.send-btn.bengkel-btn{background:var(--bengkel)}
-.send-btn.desain-btn{background:var(--desain);color:#fff}
-input[type=file]{display:none}
-
-/* FAQ Section */
+/* FAQ */
 .faq{padding:0 24px 80px;max-width:860px;margin:0 auto}
-.faq h2{font-size:28px;font-weight:800;margin-bottom:8px;text-align:center}
+.faq h2{font-size:26px;font-weight:800;margin-bottom:8px;text-align:center}
 .faq-sub{font-size:14px;color:var(--text2);text-align:center;margin-bottom:32px}
 .faq-list{display:flex;flex-direction:column;gap:8px}
 .faq-item{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
@@ -149,32 +127,162 @@ input[type=file]{display:none}
 .faq-a{display:none;padding:0 20px 16px;font-size:13px;color:var(--text2);line-height:1.8}
 .faq-item.open .faq-a{display:block}
 
-/* Footer */
-footer{border-top:1px solid var(--border);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap;gap:12px}
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .footer-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:16px}
 .footer-logo span{color:var(--elec)}
 footer p{font-size:12px;color:var(--text3)}
 
+/* ===== AUTH MODAL ===== */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;animation:fadeIn .2s ease}
+.overlay.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.auth-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:36px;width:100%;max-width:400px;animation:scaleIn .2s ease}
+@keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.auth-modal h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.auth-modal p{font-size:13px;color:var(--text2);margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.form-group input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s}
+.form-group input:focus{border-color:rgba(245,200,66,.4)}
+.form-group input::placeholder{color:var(--text3)}
+.btn-submit{width:100%;padding:13px;background:var(--elec);color:#000;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:var(--radius2);cursor:pointer;transition:all .15s;margin-top:4px}
+.btn-submit:hover{opacity:.9}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.auth-switch{text-align:center;margin-top:18px;font-size:13px;color:var(--text2)}
+.auth-switch a{color:var(--elec);cursor:pointer;font-weight:500}
+.auth-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s}
+.auth-close:hover{color:var(--text)}
+.auth-modal-wrap{position:relative}
+.msg-error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:var(--radius2);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:16px;display:none}
+.msg-success{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);border-radius:var(--radius2);padding:10px 14px;font-size:13px;color:var(--green);margin-bottom:16px;display:none}
+
+/* ===== CHAT MODAL ===== */
+.chat-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:flex-end;justify-content:center}
+.chat-overlay.open{display:flex;animation:fadeIn .2s ease}
+.chat-modal{width:100%;max-width:720px;background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;border:1px solid var(--border);border-bottom:none;display:flex;flex-direction:column;height:92vh;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.chat-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0}
+.chat-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.chat-title{flex:1}
+.chat-title h3{font-size:15px;font-weight:700;margin-bottom:2px}
+.chat-title p{font-size:12px;color:var(--text2)}
+.chat-header-btns{display:flex;gap:8px}
+.hbtn{width:32px;height:32px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s}
+.hbtn:hover{background:var(--bg4);color:var(--text)}
+
+/* quick */
+.quick-area{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.quick-label{font-size:10px;color:var(--text3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px}
+.quick-btns{display:flex;flex-wrap:wrap;gap:6px}
+.quick-btn{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.quick-btn:hover{border-color:var(--border2);color:var(--text)}
+
+/* messages */
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.msg{max-width:88%;animation:msgIn .2s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg.user{align-self:flex-end}
+.msg.user .bubble{background:var(--bg3);border:1px solid var(--border2);border-radius:12px 12px 4px 12px;padding:10px 14px;font-size:14px;line-height:1.6}
+.msg.ai{align-self:flex-start}
+.msg.ai .bubble{background:var(--bg);border:1px solid var(--border);border-radius:4px 12px 12px 12px;padding:10px 14px;font-size:14px;line-height:1.75;color:var(--text)}
+.msg .meta{font-size:11px;color:var(--text3);margin-bottom:4px;padding:0 2px}
+.msg img{max-width:100%;max-height:200px;object-fit:cover;border-radius:8px;display:block;margin-top:8px}
+.typing-wrap{align-self:flex-start}
+.typing{display:flex;gap:5px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:4px 12px 12px 12px;width:fit-content}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:typ 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typ{0%,80%,100%{transform:scale(1);opacity:.4}40%{transform:scale(1.2);opacity:1}}
+
+/* rating */
+.rating-bar{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.rating-label{font-size:11px;color:var(--text3)}
+.stars{display:flex;gap:3px}
+.star{font-size:16px;cursor:pointer;transition:transform .1s;line-height:1;filter:grayscale(1);opacity:.4}
+.star:hover,.star.active{filter:none;opacity:1;transform:scale(1.15)}
+.rated-msg{font-size:11px;color:var(--green);display:none}
+
+/* input */
+.input-area{padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0}
+.input-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .15s}
+.input-wrap:focus-within{border-color:var(--border2)}
+.preview-bar{display:none;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
+.preview-bar.show{display:flex}
+.preview-bar img{height:36px;width:36px;object-fit:cover;border-radius:6px}
+.preview-bar span{font-size:12px;color:var(--text2);flex:1}
+.preview-bar button{font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer}
+.preview-bar button:hover{color:var(--text)}
+.input-row{display:flex;align-items:flex-end;gap:4px}
+.attach-btn{padding:10px 12px;background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;transition:color .15s;flex-shrink:0}
+.attach-btn:hover{color:var(--text)}
+textarea.chat-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 4px;resize:none;min-height:42px;max-height:120px;line-height:1.5}
+textarea.chat-input::placeholder{color:var(--text3)}
+.send-btn{padding:8px 16px;margin:6px 8px;border-radius:var(--radius2);background:var(--elec);color:#000;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;border:none;cursor:pointer;transition:all .15s;flex-shrink:0}
+.send-btn:hover{opacity:.9}
+.send-btn:disabled{opacity:.3;cursor:not-allowed}
+input[type=file]{display:none}
+.login-prompt{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;background:rgba(245,200,66,.05);border-top:1px solid rgba(245,200,66,.1);font-size:13px;color:var(--text2)}
+.login-prompt a{color:var(--elec);cursor:pointer;font-weight:600}
+
+/* HISTORY MODAL */
+.hist-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;align-items:center;justify-content:center}
+.hist-overlay.open{display:flex;animation:fadeIn .2s ease}
+.hist-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);width:100%;max-width:600px;max-height:80vh;display:flex;flex-direction:column;animation:scaleIn .2s ease}
+.hist-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hist-header h3{font-size:17px;font-weight:700}
+.hist-body{overflow-y:auto;padding:16px}
+.hist-item{border:1px solid var(--border);border-radius:var(--radius2);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.hist-item:hover{border-color:var(--border2);background:var(--bg3)}
+.hist-item-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.hist-cat{font-size:10px;padding:3px 8px;border-radius:20px}
+.hist-date{font-size:11px;color:var(--text3)}
+.hist-q{font-size:13px;font-weight:500;margin-bottom:4px;color:var(--text)}
+.hist-a{font-size:12px;color:var(--text2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hist-rating{font-size:12px;margin-top:6px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text2);font-size:14px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:10px 20px;font-size:13px;z-index:999;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:rgba(74,222,128,.3);color:var(--green)}
+.toast.error{border-color:rgba(248,113,113,.3);color:var(--red)}
+
+/* LOADING */
+#app-loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .3s}
+#app-loading.hide{opacity:0;pointer-events:none}
+.loader-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;animation:pulse 1s infinite}
+.loader-logo span{color:var(--elec)}
+
 @media(max-width:600px){
-  nav{padding:16px 20px}
-  .hero{padding:60px 20px 40px}
-  .categories{padding:0 16px 48px}
-  .modal{height:95vh}
+  nav{padding:14px 18px}
+  .hero{padding:56px 18px 36px}
+  .categories,.popular-section,.faq{padding-left:16px;padding-right:16px}
+  .stats-bar{padding:0 16px;grid-template-columns:1fr 1fr 1fr}
+  .stat-card{padding:16px 12px}
+  .stat-card .num{font-size:22px}
+  .chat-modal{height:96vh}
+  .nav-badge{display:none}
 }
 </style>
 </head>
 <body>
 
+<div id="app-loading"><div class="loader-logo">Teknis<span>Pro</span></div></div>
+<div id="toast" class="toast"></div>
+
+<!-- NAV -->
 <nav>
-  <div class="logo">Teknis<span>Pro</span></div>
-  <div class="nav-badge">AI Asisten Teknis</div>
+  <div class="logo" onclick="scrollTo({top:0,behavior:'smooth'})">Teknis<span>Pro</span></div>
+  <div class="nav-right">
+    <div class="nav-badge">AI Asisten Teknis</div>
+    <div id="nav-auth"></div>
+  </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-tag">
-    <span class="dot"></span>
-    Siap membantu 24 jam
-  </div>
+  <div class="hero-tag"><span class="dot"></span>Siap membantu 24 jam</div>
   <h1>Teknisi <em>pintar</em><br>di rumahmu</h1>
   <p>Diagnosis kerusakan elektronik, masalah kendaraan, dan belajar desain — langsung dari rumah tanpa perlu ke profesional.</p>
   <div class="hero-btns">
@@ -183,101 +291,85 @@ footer p{font-size:12px;color:var(--text3)}
   </div>
 </section>
 
+<!-- STATS BAR -->
+<div class="stats-bar" id="stats-bar">
+  <div class="stat-card"><div class="num elec" id="stat-elec">—</div><div class="lbl">Pertanyaan Elektronik</div></div>
+  <div class="stat-card"><div class="num bengkel" id="stat-bengkel">—</div><div class="lbl">Pertanyaan Bengkel</div></div>
+  <div class="stat-card"><div class="num desain" id="stat-desain">—</div><div class="lbl">Pertanyaan Desain</div></div>
+</div>
+
+<!-- CATEGORIES -->
 <section class="categories">
   <div class="cat-grid">
-
     <div class="cat-card elec" onclick="openChat('elec')">
       <div class="cat-header">
         <div class="cat-icon">⚡</div>
-        <div class="cat-info">
-          <h3>Elektronik</h3>
-          <p>Diagnosis & perbaikan peralatan elektronik rumah tangga sendiri di rumah</p>
-        </div>
+        <div class="cat-info"><h3>Elektronik</h3><p>Diagnosis & perbaikan peralatan elektronik rumah tangga sendiri di rumah</p></div>
       </div>
       <div class="cat-topics">
-        <span class="topic">TV & monitor</span>
-        <span class="topic">Kulkas</span>
-        <span class="topic">Mesin cuci</span>
-        <span class="topic">Kipas angin</span>
-        <span class="topic">Charger & baterai</span>
-        <span class="topic">AC</span>
+        <span class="topic">TV & monitor</span><span class="topic">Kulkas</span><span class="topic">Mesin cuci</span>
+        <span class="topic">Kipas angin</span><span class="topic">Charger & baterai</span><span class="topic">AC</span>
       </div>
-      <div class="cat-action">
-        <span>Tanya teknisi AI</span>
-        <span class="arrow">→</span>
-      </div>
+      <div class="cat-action"><span>Tanya teknisi AI</span><span class="arrow">→</span></div>
     </div>
-
     <div class="cat-card bengkel" onclick="openChat('bengkel')">
       <div class="cat-header">
         <div class="cat-icon">🔧</div>
-        <div class="cat-info">
-          <h3>Bengkel Kendaraan</h3>
-          <p>Diagnosis masalah motor & mobil, langkah darurat, estimasi biaya</p>
-        </div>
+        <div class="cat-info"><h3>Bengkel Kendaraan</h3><p>Diagnosis masalah motor & mobil, langkah darurat, estimasi biaya</p></div>
       </div>
       <div class="cat-topics">
-        <span class="topic">Motor susah hidup</span>
-        <span class="topic">Rem berdecit</span>
-        <span class="topic">Overheat</span>
-        <span class="topic">Check engine</span>
-        <span class="topic">Ganti oli</span>
-        <span class="topic">Ban bocor</span>
+        <span class="topic">Motor susah hidup</span><span class="topic">Rem berdecit</span><span class="topic">Overheat</span>
+        <span class="topic">Check engine</span><span class="topic">Ganti oli</span><span class="topic">Ban bocor</span>
       </div>
-      <div class="cat-action">
-        <span>Tanya mekanik AI</span>
-        <span class="arrow">→</span>
-      </div>
+      <div class="cat-action"><span>Tanya mekanik AI</span><span class="arrow">→</span></div>
     </div>
-
     <div class="cat-card desain" onclick="openChat('desain')">
       <div class="cat-header">
         <div class="cat-icon">🎨</div>
-        <div class="cat-info">
-          <h3>Belajar Desain</h3>
-          <p>Desain grafis, interior rumah, kombinasi warna, dan rekomendasi tools gratis</p>
-        </div>
+        <div class="cat-info"><h3>Belajar Desain</h3><p>Desain grafis, interior rumah, kombinasi warna, dan rekomendasi tools gratis</p></div>
       </div>
       <div class="cat-topics">
-        <span class="topic">Desain grafis</span>
-        <span class="topic">Interior kamar</span>
-        <span class="topic">Kombinasi warna</span>
-        <span class="topic">Logo & branding</span>
-        <span class="topic">Canva tips</span>
-        <span class="topic">Fotografi</span>
+        <span class="topic">Desain grafis</span><span class="topic">Interior kamar</span><span class="topic">Kombinasi warna</span>
+        <span class="topic">Logo & branding</span><span class="topic">Canva tips</span><span class="topic">Fotografi</span>
       </div>
-      <div class="cat-action">
-        <span>Tanya desainer AI</span>
-        <span class="arrow">→</span>
-      </div>
+      <div class="cat-action"><span>Tanya desainer AI</span><span class="arrow">→</span></div>
     </div>
-
   </div>
 </section>
 
+<!-- POPULAR QUESTIONS -->
+<section class="popular-section">
+  <div class="section-title">🔥 Pertanyaan Terpopuler</div>
+  <div class="section-sub">Berdasarkan percakapan pengguna TeknisPro</div>
+  <div class="popular-list" id="popular-list">
+    <div class="empty-state" style="padding:20px">Memuat data...</div>
+  </div>
+</section>
+
+<!-- FAQ -->
 <section class="faq">
   <h2>Pertanyaan umum</h2>
   <p class="faq-sub">Hal yang sering ditanyakan tentang TeknisPro</p>
   <div class="faq-list">
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)"><span>Apakah aman memperbaiki elektronik sendiri?</span><span class="icon">+</span></div>
-      <div class="faq-a">Untuk perbaikan ringan seperti mengganti sekring, membersihkan filter, atau mengecek kabel yang longgar — sangat aman jika kamu pastikan peralatan sudah dimatikan dan dicabut dari listrik terlebih dahulu. Untuk perbaikan yang melibatkan komponen dalam seperti kapasitor atau trafo, lebih aman diserahkan ke teknisi profesional. TeknisPro akan selalu mengingatkan batas aman perbaikan mandiri.</div>
+      <div class="faq-a">Untuk perbaikan ringan seperti mengganti sekring, membersihkan filter, atau mengecek kabel yang longgar — sangat aman jika kamu pastikan peralatan sudah dimatikan dan dicabut dari listrik terlebih dahulu. TeknisPro akan selalu mengingatkan batas aman perbaikan mandiri.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)"><span>Bisa upload foto kerusakan?</span><span class="icon">+</span></div>
-      <div class="faq-a">Ya! Kamu bisa klik ikon 📎 di kotak chat untuk upload foto kerusakan. AI akan menganalisis gambar dan memberikan diagnosis yang lebih akurat berdasarkan kondisi visual yang terlihat. Semakin jelas foto yang dikirim, semakin akurat diagnosisnya.</div>
+      <div class="faq-a">Ya! Kamu bisa klik ikon 📎 di kotak chat untuk upload foto kerusakan. Gemini AI akan menganalisis gambar dan memberikan diagnosis yang lebih akurat berdasarkan kondisi visual yang terlihat.</div>
     </div>
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)"><span>Apakah jawabannya akurat?</span><span class="icon">+</span></div>
-      <div class="faq-a">TeknisPro memberikan panduan berdasarkan pengetahuan teknis umum yang luas. Namun setiap kasus bisa berbeda tergantung merek, model, dan kondisi spesifik peralatan kamu. Selalu gunakan hasil diagnosis sebagai panduan awal, bukan keputusan final. Untuk kerusakan serius atau berulang, tetap konsultasikan dengan teknisi profesional.</div>
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Perlu login untuk menggunakan?</span><span class="icon">+</span></div>
+      <div class="faq-a">Tidak wajib! Kamu bisa langsung chat tanpa login. Tapi kalau login, riwayat percakapanmu akan tersimpan dan bisa dilihat kembali kapan saja.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)"><span>Apakah data saya tersimpan?</span><span class="icon">+</span></div>
-      <div class="faq-a">Percakapan kamu tidak disimpan secara permanen di server kami. Setiap kali kamu menutup atau me-refresh halaman, riwayat chat akan terhapus. Ini menjaga privasi kamu tetap aman.</div>
+      <div class="faq-a">Tanpa login, percakapan tidak disimpan. Jika login, riwayat chat tersimpan di akun kamu dan bisa diakses kembali. Data ini tidak dibagikan ke pihak lain.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)"><span>Apakah gratis?</span><span class="icon">+</span></div>
-      <div class="faq-a">Ya, TeknisPro gratis digunakan. Cukup akses melalui browser tanpa perlu download atau daftar akun.</div>
+      <div class="faq-a">Ya, TeknisPro gratis sepenuhnya. Cukup akses melalui browser tanpa perlu download atau berlangganan.</div>
     </div>
   </div>
 </section>
@@ -287,25 +379,56 @@ footer p{font-size:12px;color:var(--text3)}
   <p>Asisten teknis AI untuk kebutuhan rumah tangga sehari-hari</p>
 </footer>
 
-<!-- CHAT MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-icon" id="modal-icon">⚡</div>
-      <div class="modal-title">
-        <h3 id="modal-title">Asisten Elektronik</h3>
-        <p id="modal-sub">Ceritakan masalah + kirim foto untuk diagnosis akurat</p>
-      </div>
-      <button class="close-btn" onclick="closeChat()">✕</button>
+<!-- AUTH MODAL -->
+<div class="overlay" id="auth-overlay" onclick="handleAuthOverlay(event)">
+  <div class="auth-modal-wrap">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div class="auth-modal">
+      <h2 id="auth-title">Masuk</h2>
+      <p id="auth-desc">Login untuk menyimpan riwayat percakapanmu</p>
+      <div id="auth-error" class="msg-error"></div>
+      <div id="auth-success" class="msg-success"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="auth-email" placeholder="kamu@email.com"/></div>
+      <div class="form-group" id="name-group" style="display:none"><label>Nama</label><input type="text" id="auth-name" placeholder="Nama kamu"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="auth-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')submitAuth()"/></div>
+      <button class="btn-submit" id="auth-btn" onclick="submitAuth()">Masuk</button>
+      <div class="auth-switch" id="auth-switch">Belum punya akun? <a onclick="toggleAuthMode()">Daftar sekarang</a></div>
     </div>
+  </div>
+</div>
 
+<!-- HISTORY MODAL -->
+<div class="hist-overlay" id="hist-overlay" onclick="handleHistOverlay(event)">
+  <div class="hist-modal">
+    <div class="hist-header">
+      <h3>📋 Riwayat Chat</h3>
+      <button class="hbtn" onclick="closeHistory()">✕</button>
+    </div>
+    <div class="hist-body" id="hist-body">
+      <div class="empty-state">Memuat riwayat...</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT MODAL -->
+<div class="chat-overlay" id="chat-overlay" onclick="handleChatOverlay(event)">
+  <div class="chat-modal">
+    <div class="chat-header">
+      <div class="chat-icon" id="chat-icon">⚡</div>
+      <div class="chat-title">
+        <h3 id="chat-title">Asisten Elektronik</h3>
+        <p id="chat-sub">Ceritakan masalah + kirim foto untuk diagnosis akurat</p>
+      </div>
+      <div class="chat-header-btns">
+        <button class="hbtn" id="hist-btn" onclick="openHistory()" title="Riwayat chat" style="display:none">📋</button>
+        <button class="hbtn" onclick="closeChat()">✕</button>
+      </div>
+    </div>
     <div class="quick-area">
       <div class="quick-label">Pertanyaan cepat</div>
       <div class="quick-btns" id="quick-btns"></div>
     </div>
-
-    <div class="chat-messages" id="chat-messages"></div>
-
+    <div class="chat-msgs" id="chat-msgs"></div>
     <div class="input-area">
       <div class="input-wrap">
         <div class="preview-bar" id="preview-bar">
@@ -320,243 +443,361 @@ footer p{font-size:12px;color:var(--text3)}
           <button class="send-btn" id="send-btn" onclick="sendMsg()">Kirim</button>
         </div>
       </div>
+      <div class="login-prompt" id="login-prompt" style="display:none">
+        💾 <a onclick="openAuth()">Login</a> untuk menyimpan riwayat percakapan ini
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-const CATEGORIES = {
-  elec: {
-    label: 'Asisten Elektronik',
-    icon: '⚡',
-    iconBg: 'var(--elec2)',
-    iconColor: 'var(--elec)',
-    btnClass: '',
-    system: `Kamu adalah teknisi elektronik berpengalaman 20 tahun yang membantu orang memperbaiki peralatan elektronik rumah tangga sendiri di rumah. 
-Jika ada gambar, analisis kerusakan yang terlihat secara detail.
-Selalu jawab dalam Bahasa Indonesia yang mudah dipahami orang awam.
-Format jawaban: 
-1) Kemungkinan penyebab (singkat, poin-poin)
-2) Cara diagnosis sederhana yang bisa dilakukan sendiri  
-3) Solusi mandiri langkah demi langkah
-4) Kapan harus ke teknisi profesional
-Selalu ingatkan keselamatan: cabut dari listrik sebelum bongkar apapun. Jawab praktis, tidak bertele-tele.`,
-    questions: ['TV mati total, lampu indikator tidak nyala','Kulkas tidak dingin tapi lampu menyala','Kipas angin nyala tapi tidak mau berputar','Mesin cuci berhenti di tengah proses','AC tidak dingin, hanya angin biasa','Charger HP cepat panas dan lambat isi']
-  },
-  bengkel: {
-    label: 'Asisten Bengkel',
-    icon: '🔧',
-    iconBg: 'var(--bengkel2)',
-    iconColor: 'var(--bengkel)',
-    btnClass: 'bengkel-btn',
-    system: `Kamu adalah mekanik kendaraan berpengalaman 20 tahun yang membantu diagnosis masalah motor dan mobil.
-Jika ada gambar komponen atau kondisi kendaraan, analisis dengan detail.
-Selalu jawab dalam Bahasa Indonesia yang mudah dipahami orang awam.
-Format jawaban:
-1) Kemungkinan penyebab (poin-poin)
-2) Ciri-ciri dan cara cek sendiri
-3) Langkah penanganan darurat / sementara
-4) Apakah aman dikendarai? (YA/TIDAK/HATI-HATI)
-5) Perkiraan biaya perbaikan di bengkel
-Jawab praktis dan to the point. Utamakan keselamatan.`,
-    questions: ['Motor susah dihidupkan di pagi hari','Rem motor bunyi berdecit saat dipakai','Mobil overheat, indikator suhu merah','Lampu check engine menyala di dashboard','Suara berisik dari mesin saat jalan','Oli motor harus ganti berapa km sekali?']
-  },
-  desain: {
-    label: 'Asisten Desain',
-    icon: '🎨',
-    iconBg: 'var(--desain2)',
-    iconColor: 'var(--desain)',
-    btnClass: 'desain-btn',
-    system: `Kamu adalah desainer profesional berpengalaman yang membantu pemula belajar desain grafis dan interior.
-Jika ada gambar ruangan, karya desain, atau referensi, berikan analisis dan feedback konstruktif.
-Selalu jawab dalam Bahasa Indonesia yang ramah, mudah dipahami, dan memotivasi.
-Format jawaban:
-1) Analisis / penjelasan konsep (singkat)
-2) Langkah-langkah praktis yang bisa langsung diterapkan
-3) Tools / aplikasi gratis yang bisa dipakai (Canva, Figma, dll)
-4) Tips tambahan dan inspirasi
-Fokus pada solusi yang bisa dilakukan GRATIS atau murah.`,
-    questions: ['Ingin belajar desain grafis dari nol, mulai dari mana?','Kamar 3x3 meter terasa sempit, tips interior?','Cara pilih kombinasi warna yang bagus?','Bagaimana membuat logo sederhana sendiri?','Aplikasi desain gratis terbaik untuk HP?','Tips foto produk yang bagus pakai HP biasa']
-  }
-};
+// ===== CONFIG =====
+const SUPABASE_URL = 'https://trfcucgdhukbnpofpsnw.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZmN1Y2dkaHVrYm5wb2Zwc253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NTMyNjAsImV4cCI6MjA5MTAyOTI2MH0.8L2pnBcZqcsRTjC-DBUOBIAZDieubsQ62n6VyKGtLL0';
+const GEMINI_KEY = 'AIzaSyBz4SBdDUKIZreOcGpUTQ_8X2Do7SoWrDQ';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
 
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let currentUser = null;
 let currentCat = 'elec';
 let messages = [];
 let pendingImg = null;
-const API_KEY = ''; // Isi dengan Anthropic API key kamu
+let authMode = 'login';
+let currentChatHistory = []; // for history modal
 
+// ===== CATEGORIES =====
+const CATS = {
+  elec: {
+    label:'Asisten Elektronik', icon:'⚡', iconBg:'var(--elec2)', iconColor:'var(--elec)',
+    sendColor:'var(--elec)', sendTextColor:'#000',
+    system:`Kamu adalah teknisi elektronik berpengalaman 20 tahun yang membantu orang memperbaiki peralatan elektronik rumah tangga sendiri di rumah. Jika ada gambar, analisis kerusakan yang terlihat secara detail. Selalu jawab dalam Bahasa Indonesia yang mudah dipahami orang awam. Format jawaban: 1) Kemungkinan penyebab (poin-poin singkat) 2) Cara diagnosis sederhana 3) Solusi mandiri langkah demi langkah 4) Kapan harus ke teknisi profesional. Selalu ingatkan keselamatan: cabut dari listrik sebelum bongkar apapun.`,
+    questions:['TV mati total, lampu indikator tidak nyala','Kulkas tidak dingin tapi lampu menyala','Kipas angin nyala tapi tidak mau berputar','Mesin cuci berhenti di tengah proses','AC tidak dingin, hanya angin biasa','Charger HP cepat panas dan lambat isi']
+  },
+  bengkel: {
+    label:'Asisten Bengkel', icon:'🔧', iconBg:'var(--bengkel2)', iconColor:'var(--bengkel)',
+    sendColor:'var(--bengkel)', sendTextColor:'#000',
+    system:`Kamu adalah mekanik kendaraan berpengalaman 20 tahun yang membantu diagnosis masalah motor dan mobil. Jika ada gambar komponen, analisis dengan detail. Selalu jawab dalam Bahasa Indonesia yang mudah dipahami orang awam. Format jawaban: 1) Kemungkinan penyebab 2) Ciri-ciri dan cara cek sendiri 3) Langkah penanganan darurat 4) Apakah aman dikendarai? (YA/TIDAK/HATI-HATI) 5) Perkiraan biaya perbaikan. Utamakan keselamatan.`,
+    questions:['Motor susah dihidupkan di pagi hari','Rem motor bunyi berdecit saat dipakai','Mobil overheat, indikator suhu merah','Lampu check engine menyala di dashboard','Suara berisik dari mesin saat jalan','Oli motor harus ganti berapa km sekali?']
+  },
+  desain: {
+    label:'Asisten Desain', icon:'🎨', iconBg:'var(--desain2)', iconColor:'var(--desain)',
+    sendColor:'var(--desain)', sendTextColor:'#fff',
+    system:`Kamu adalah desainer profesional berpengalaman yang membantu pemula belajar desain grafis dan interior. Jika ada gambar ruangan atau karya desain, berikan analisis dan feedback konstruktif. Selalu jawab dalam Bahasa Indonesia yang ramah dan memotivasi. Format jawaban: 1) Analisis/penjelasan konsep 2) Langkah-langkah praktis 3) Tools/aplikasi gratis yang bisa dipakai (Canva, Figma, dll) 4) Tips tambahan. Fokus pada solusi GRATIS atau murah.`,
+    questions:['Ingin belajar desain grafis dari nol, mulai dari mana?','Kamar 3x3 meter terasa sempit, tips interior?','Cara pilih kombinasi warna yang bagus?','Bagaimana membuat logo sederhana sendiri?','Aplikasi desain gratis terbaik untuk HP?','Tips foto produk yang bagus pakai HP biasa']
+  }
+};
+
+// ===== INIT =====
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) { currentUser = session.user; }
+  renderNav();
+  loadStats();
+  loadPopular();
+  document.getElementById('app-loading').classList.add('hide');
+
+  sb.auth.onAuthStateChange((event, session) => {
+    currentUser = session?.user || null;
+    renderNav();
+    if (document.getElementById('chat-overlay').classList.contains('open')) {
+      document.getElementById('login-prompt').style.display = currentUser ? 'none' : 'flex';
+      document.getElementById('hist-btn').style.display = currentUser ? 'flex' : 'none';
+    }
+  });
+}
+
+// ===== NAV =====
+function renderNav() {
+  const el = document.getElementById('nav-auth');
+  if (currentUser) {
+    const name = currentUser.user_metadata?.name || currentUser.email.split('@')[0];
+    const initial = name[0].toUpperCase();
+    el.innerHTML = `
+      <div class="user-info">
+        <div class="user-avatar">${initial}</div>
+        <span style="font-size:13px;color:var(--text2)">${name}</span>
+        <button class="btn-auth" onclick="openHistory()">Riwayat</button>
+        <button class="btn-auth" onclick="signOut()">Keluar</button>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <button class="btn-auth" onclick="openAuth('login')">Masuk</button>
+      <button class="btn-auth primary" onclick="openAuth('register')">Daftar</button>`;
+  }
+}
+
+// ===== AUTH =====
+function openAuth(mode='login') {
+  authMode = mode;
+  document.getElementById('auth-overlay').classList.add('open');
+  document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-success').style.display='none';
+  updateAuthUI();
+}
+function closeAuth() { document.getElementById('auth-overlay').classList.remove('open'); }
+function handleAuthOverlay(e) { if(e.target===document.getElementById('auth-overlay')) closeAuth(); }
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  updateAuthUI();
+}
+function updateAuthUI() {
+  const isReg = authMode === 'register';
+  document.getElementById('auth-title').textContent = isReg ? 'Daftar Akun' : 'Masuk';
+  document.getElementById('auth-desc').textContent = isReg ? 'Buat akun untuk menyimpan riwayat chat' : 'Login untuk menyimpan riwayat percakapanmu';
+  document.getElementById('auth-btn').textContent = isReg ? 'Daftar' : 'Masuk';
+  document.getElementById('name-group').style.display = isReg ? 'block' : 'none';
+  document.getElementById('auth-switch').innerHTML = isReg
+    ? 'Sudah punya akun? <a onclick="toggleAuthMode()">Masuk di sini</a>'
+    : 'Belum punya akun? <a onclick="toggleAuthMode()">Daftar sekarang</a>';
+  document.getElementById('auth-email').value='';
+  document.getElementById('auth-pass').value='';
+  document.getElementById('auth-name').value='';
+  document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-success').style.display='none';
+}
+async function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  const name = document.getElementById('auth-name').value.trim();
+  const btn = document.getElementById('auth-btn');
+  const errEl = document.getElementById('auth-error');
+  const okEl = document.getElementById('auth-success');
+
+  if(!email||!pass){errEl.textContent='Email dan password wajib diisi.';errEl.style.display='block';return;}
+  btn.disabled=true; btn.textContent='Memproses...';
+  errEl.style.display='none'; okEl.style.display='none';
+
+  try {
+    if(authMode==='register'){
+      const {error} = await sb.auth.signUp({email,password:pass,options:{data:{name:name||email.split('@')[0]}}});
+      if(error) throw error;
+      okEl.textContent='Akun berhasil dibuat! Silakan cek email untuk verifikasi.';
+      okEl.style.display='block';
+    } else {
+      const {error} = await sb.auth.signInWithPassword({email,password:pass});
+      if(error) throw error;
+      closeAuth();
+      showToast('Berhasil masuk!','success');
+    }
+  } catch(e) {
+    errEl.textContent = e.message==='Invalid login credentials' ? 'Email atau password salah.' : (e.message||'Terjadi kesalahan.');
+    errEl.style.display='block';
+  }
+  btn.disabled=false; btn.textContent = authMode==='register'?'Daftar':'Masuk';
+}
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser=null;
+  renderNav();
+  showToast('Berhasil keluar','success');
+}
+
+// ===== CHAT =====
 function openChat(cat) {
-  currentCat = cat;
-  messages = [];
-  const c = CATEGORIES[cat];
-  document.getElementById('modal-icon').textContent = c.icon;
-  document.getElementById('modal-icon').style.background = c.iconBg;
-  document.getElementById('modal-icon').style.color = c.iconColor;
-  document.getElementById('modal-title').textContent = c.label;
-  document.getElementById('send-btn').className = 'send-btn ' + c.btnClass;
-
-  const qbtns = document.getElementById('quick-btns');
-  qbtns.innerHTML = c.questions.map(q =>
-    `<button class="quick-btn" onclick="fillQ(this.textContent)">${q}</button>`
-  ).join('');
-
-  const msgs = document.getElementById('chat-messages');
-  msgs.innerHTML = `
-    <div class="msg ai">
-      <div class="meta">${c.label}</div>
-      <div class="bubble">Halo! Saya siap membantu. Ceritakan masalahmu atau pilih pertanyaan di atas. Bisa juga lampirkan foto untuk diagnosis lebih akurat 📸</div>
-    </div>`;
-
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  currentCat=cat; messages=[];
+  const c=CATS[cat];
+  const icon=document.getElementById('chat-icon');
+  icon.textContent=c.icon; icon.style.background=c.iconBg; icon.style.color=c.iconColor;
+  document.getElementById('chat-title').textContent=c.label;
+  const sb2=document.getElementById('send-btn');
+  sb2.style.background=c.sendColor; sb2.style.color=c.sendTextColor;
+  const qbtns=document.getElementById('quick-btns');
+  qbtns.innerHTML=c.questions.map(q=>`<button class="quick-btn" onclick="fillQ(this.textContent)">${q}</button>`).join('');
+  const msgs=document.getElementById('chat-msgs');
+  msgs.innerHTML=`<div class="msg ai"><div class="meta">${c.label}</div><div class="bubble">Halo! Saya siap membantu. Ceritakan masalahmu atau pilih pertanyaan di atas. Bisa juga lampirkan foto untuk diagnosis lebih akurat 📸</div></div>`;
+  document.getElementById('login-prompt').style.display = currentUser?'none':'flex';
+  document.getElementById('hist-btn').style.display = currentUser?'flex':'none';
+  document.getElementById('chat-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
   removeImg();
-  document.getElementById('chat-input').value = '';
+  document.getElementById('chat-input').value='';
 }
-
-function closeChat() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeChat();
-}
-
-function fillQ(q) {
-  document.getElementById('chat-input').value = q;
-  document.getElementById('chat-input').focus();
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-}
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
+function closeChat() { document.getElementById('chat-overlay').classList.remove('open'); document.body.style.overflow=''; }
+function handleChatOverlay(e) { if(e.target===document.getElementById('chat-overlay')) closeChat(); }
+function fillQ(q) { document.getElementById('chat-input').value=q; document.getElementById('chat-input').focus(); }
+function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} }
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function handleFile(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    pendingImg = { base64: ev.target.result.split(',')[1], type: file.type, preview: ev.target.result, name: file.name };
-    document.getElementById('preview-img').src = ev.target.result;
-    document.getElementById('preview-name').textContent = file.name;
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    pendingImg={base64:ev.target.result.split(',')[1],type:file.type,preview:ev.target.result,name:file.name};
+    document.getElementById('preview-img').src=ev.target.result;
+    document.getElementById('preview-name').textContent=file.name;
     document.getElementById('preview-bar').classList.add('show');
   };
-  reader.readAsDataURL(file);
-  e.target.value = '';
+  reader.readAsDataURL(file); e.target.value='';
 }
+function removeImg(){pendingImg=null;document.getElementById('preview-bar').classList.remove('show');document.getElementById('preview-img').src='';}
 
-function removeImg() {
-  pendingImg = null;
-  document.getElementById('preview-bar').classList.remove('show');
-  document.getElementById('preview-img').src = '';
-}
-
-function addMsg(role, text, imgSrc) {
-  const msgs = document.getElementById('chat-messages');
-  const c = CATEGORIES[currentCat];
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="foto"/>` : '';
-  div.innerHTML = `
-    <div class="meta">${role === 'user' ? 'Kamu' : c.label}</div>
-    <div class="bubble">${text.replace(/\n/g,'<br>')}${imgHtml}</div>`;
+function addMsg(role,text,imgSrc,id) {
+  const msgs=document.getElementById('chat-msgs');
+  const c=CATS[currentCat];
+  const div=document.createElement('div');
+  div.className=`msg ${role}`;
+  if(id) div.dataset.id=id;
+  const imgHtml=imgSrc?`<img src="${imgSrc}" alt="foto"/>`:'';
+  const ratingHtml=role==='ai'&&id?`
+    <div class="rating-bar" id="rating-${id}">
+      <span class="rating-label">Jawaban membantu?</span>
+      <div class="stars">
+        ${[1,2,3,4,5].map(n=>`<span class="star" onclick="rateMsg('${id}',${n})" data-v="${n}">⭐</span>`).join('')}
+      </div>
+      <span class="rated-msg" id="rated-${id}">✓ Terima kasih!</span>
+    </div>`:'';
+  div.innerHTML=`<div class="meta">${role==='user'?'Kamu':c.label}</div><div class="bubble">${text.replace(/\n/g,'<br>')}${imgHtml}${ratingHtml}</div>`;
   msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  msgs.scrollTop=msgs.scrollHeight;
 }
 
 function addTyping() {
-  const msgs = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'msg ai';
-  div.id = 'typing-indicator';
-  div.innerHTML = `<div class="meta">${CATEGORIES[currentCat].label}</div>
-    <div class="typing"><span></span><span></span><span></span></div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  const msgs=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.className='typing-wrap'; div.id='typing-ind';
+  div.innerHTML=`<div class="typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
 }
+function removeTyping(){const t=document.getElementById('typing-ind');if(t)t.remove();}
 
-function removeTyping() {
-  const t = document.getElementById('typing-indicator');
-  if (t) t.remove();
-}
-
-async function sendMsg() {
-  const input = document.getElementById('chat-input');
-  const btn = document.getElementById('send-btn');
-  const text = input.value.trim();
-  if (!text && !pendingImg) return;
-
-  const userText = text || '(Lihat foto terlampir)';
-  const imgSnap = pendingImg;
-  input.value = '';
-  input.style.height = 'auto';
-  removeImg();
-  btn.disabled = true;
-
-  addMsg('user', userText, imgSnap?.preview);
-  messages.push({ role: 'user', text: userText, img: imgSnap });
+async function sendMsg(){
+  const input=document.getElementById('chat-input');
+  const btn=document.getElementById('send-btn');
+  const text=input.value.trim();
+  if(!text&&!pendingImg)return;
+  const userText=text||'(Lihat foto terlampir)';
+  const imgSnap=pendingImg;
+  input.value=''; input.style.height='auto'; removeImg(); btn.disabled=true;
+  addMsg('user',userText,imgSnap?.preview);
   addTyping();
 
   try {
-    let reply;
-    if (!API_KEY) {
-      // Demo mode tanpa API key
-      await new Promise(r => setTimeout(r, 1200));
-      reply = getDemoReply(currentCat, userText);
-    } else {
-      reply = await callAPI(userText, imgSnap);
-    }
+    const reply=await callGemini(userText,imgSnap);
     removeTyping();
-    messages.push({ role: 'assistant', text: reply });
-    addMsg('ai', reply);
+    let histId=null;
+    if(currentUser){
+      const {data}=await sb.from('chat_history').insert({
+        user_id:currentUser.id, category:currentCat,
+        question:userText.substring(0,500), answer:reply.substring(0,2000)
+      }).select('id').single();
+      histId=data?.id||null;
+    }
+    addMsg('ai',reply,null,histId);
+    messages.push({role:'user',text:userText},{role:'ai',text:reply});
+    loadStats(); loadPopular();
   } catch(e) {
     removeTyping();
-    addMsg('ai', 'Maaf, terjadi kesalahan koneksi. Pastikan API key sudah diisi di file index.html, lalu coba lagi.');
+    addMsg('ai','Maaf, terjadi kesalahan. Coba lagi beberapa saat.');
+    console.error(e);
   }
-  btn.disabled = false;
+  btn.disabled=false;
 }
 
-async function callAPI(text, imgSnap) {
-  const c = CATEGORIES[currentCat];
-  const apiMsgs = messages.slice(0,-1).map(m => ({
-    role: m.role === 'user' ? 'user' : 'assistant',
-    content: m.text
-  }));
-  let content;
-  if (imgSnap) {
-    content = [
-      { type: 'image', source: { type: 'base64', media_type: imgSnap.type, data: imgSnap.base64 } },
-      { type: 'text', text: text || 'Analisis gambar ini dan jelaskan masalah yang terlihat.' }
-    ];
-  } else { content = text; }
-  apiMsgs.push({ role: 'user', content });
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1024, system: c.system, messages: apiMsgs })
-  });
-  const data = await res.json();
-  return data.content?.map(c => c.text || '').join('') || 'Maaf, tidak ada respons.';
-}
-
-function getDemoReply(cat, q) {
-  const demos = {
-    elec: `Berdasarkan deskripsimu, ada beberapa kemungkinan penyebab:\n\n**Kemungkinan penyebab:**\n• Sekring putus atau MCB trip\n• Kabel power rusak atau longgar\n• Komponen internal bermasalah\n\n**Cara cek sederhana:**\n1. Periksa MCB di box listrik — pastikan tidak ada yang trip (posisi turun)\n2. Coba colokan di stop kontak lain\n3. Periksa kabel power, cek ada yang putus atau terbakar tidak\n\n**Solusi mandiri:**\n• Jika MCB trip → naikkan kembali, tunggu 5 menit sebelum nyalakan\n• Ganti kabel power jika terlihat rusak\n\n**Kapan ke teknisi:** Jika setelah langkah di atas masih bermasalah, atau ada bau terbakar → segera ke teknisi.\n\n⚠️ *Selalu cabut dari listrik sebelum memeriksa bagian dalam peralatan.*\n\n---\n*💡 Mode demo — untuk jawaban AI penuh, isi API key di file index.html*`,
-    bengkel: `Berdasarkan gejala yang kamu ceritakan:\n\n**Kemungkinan penyebab:**\n• Aki lemah atau soak\n• Busi kotor atau sudah aus\n• Karburator tersumbat (motor karbu)\n• Filter udara kotor\n\n**Cara cek sendiri:**\n1. Cek tegangan aki dengan voltmeter — normal 12.4V keatas\n2. Lihat kondisi busi — hitam pekat atau elektroda sudah tipis\n3. Coba starter berulang dengan choke ditarik penuh\n\n**Langkah darurat:**\n• Dorong motor dan bump start (oper gigi 2, lepas kopling cepat)\n• Jika aki lemah, charge dulu semalam\n\n**Aman dikendarai?** ⚠️ HATI-HATI — perbaiki dulu sebelum perjalanan jauh.\n\n**Estimasi biaya bengkel:** Ganti busi Rp 25–50rb, ganti aki Rp 150–300rb\n\n---\n*💡 Mode demo — untuk jawaban AI penuh, isi API key di file index.html*`,
-    desain: `Pertanyaan bagus! Ini panduan praktisnya:\n\n**Mulai dari sini:**\n1. Pelajari 3 konsep dasar dulu: komposisi, warna, tipografi\n2. Jangan langsung bikin yang rumit — mulai dari poster sederhana\n3. Amati desain di sekitarmu dan tiru dulu (untuk belajar)\n\n**Tools gratis yang recommended:**\n• **Canva** — termudah untuk pemula, banyak template\n• **Figma** — lebih powerful, gratis untuk personal\n• **Adobe Express** — bagus untuk social media\n\n**Langkah belajar 30 hari:**\nMinggu 1: Eksplorasi Canva, buat 5 desain dari template\nMinggu 2: Pelajari teori warna (color wheel)\nMinggu 3: Belajar tipografi — max 2 font per desain\nMinggu 4: Bikin project nyata (poster acara, feed IG)\n\n**Tips:** Ikuti akun desainer di Pinterest dan Instagram untuk inspirasi harian.\n\n---\n*💡 Mode demo — untuk jawaban AI penuh, isi API key di file index.html*`
+async function callGemini(text,imgSnap) {
+  const c=CATS[currentCat];
+  const parts=[];
+  if(imgSnap){parts.push({inline_data:{mime_type:imgSnap.type,data:imgSnap.base64}});}
+  parts.push({text});
+  const history=messages.slice(-8).map(m=>({role:m.role==='ai'?'model':'user',parts:[{text:m.text}]}));
+  const body={
+    system_instruction:{parts:[{text:c.system}]},
+    contents:[...history,{role:'user',parts}],
+    generationConfig:{maxOutputTokens:1024,temperature:0.7}
   };
-  return demos[cat] || demos.elec;
+  const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'Maaf, tidak ada respons.';
 }
 
-function toggleFaq(el) {
-  el.parentElement.classList.toggle('open');
+async function rateMsg(histId,rating){
+  if(!currentUser||!histId)return;
+  await sb.from('chat_history').update({rating}).eq('id',histId).eq('user_id',currentUser.id);
+  const stars=document.querySelectorAll(`#rating-${histId} .star`);
+  stars.forEach(s=>{s.classList.toggle('active',+s.dataset.v<=rating);s.style.pointerEvents='none';});
+  document.getElementById(`rated-${histId}`).style.display='inline';
 }
+
+// ===== HISTORY =====
+async function openHistory(){
+  if(!currentUser){openAuth();return;}
+  document.getElementById('hist-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  const body=document.getElementById('hist-body');
+  body.innerHTML='<div class="empty-state">Memuat riwayat...</div>';
+  const {data,error}=await sb.from('chat_history').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(30);
+  if(error||!data?.length){body.innerHTML='<div class="empty-state">Belum ada riwayat chat.</div>';return;}
+  currentChatHistory=data;
+  body.innerHTML=data.map(h=>{
+    const cat=CATS[h.category]||CATS.elec;
+    const date=new Date(h.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const stars=h.rating?'⭐'.repeat(h.rating):'—';
+    return `<div class="hist-item" onclick="replayHistory(${JSON.stringify(h).replace(/"/g,'&quot;')})">
+      <div class="hist-item-top">
+        <span class="hist-cat ${h.category}">${cat.icon} ${cat.label}</span>
+        <span class="hist-date">${date}</span>
+      </div>
+      <div class="hist-q">${h.question}</div>
+      <div class="hist-a">${h.answer}</div>
+      ${h.rating?`<div class="hist-rating">${stars} (${h.rating}/5)</div>`:''}
+    </div>`;
+  }).join('');
+}
+function closeHistory(){document.getElementById('hist-overlay').classList.remove('open');document.body.style.overflow='';}
+function handleHistOverlay(e){if(e.target===document.getElementById('hist-overlay'))closeHistory();}
+function replayHistory(h){
+  closeHistory();
+  openChat(h.category);
+  setTimeout(()=>{
+    const msgs=document.getElementById('chat-msgs');
+    const cat=CATS[h.category];
+    msgs.innerHTML+=`
+      <div class="msg user"><div class="meta">Kamu</div><div class="bubble">${h.question.replace(/\n/g,'<br>')}</div></div>
+      <div class="msg ai"><div class="meta">${cat.label}</div><div class="bubble">${h.answer.replace(/\n/g,'<br>')}</div></div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+    messages=[{role:'user',text:h.question},{role:'ai',text:h.answer}];
+  },300);
+}
+
+// ===== STATS =====
+async function loadStats(){
+  const {data}=await sb.from('chat_history').select('category');
+  if(!data)return;
+  const counts={elec:0,bengkel:0,desain:0};
+  data.forEach(r=>{if(counts[r.category]!==undefined)counts[r.category]++;});
+  document.getElementById('stat-elec').textContent=counts.elec||'0';
+  document.getElementById('stat-bengkel').textContent=counts.bengkel||'0';
+  document.getElementById('stat-desain').textContent=counts.desain||'0';
+}
+
+// ===== POPULAR =====
+async function loadPopular(){
+  const {data}=await sb.from('chat_history').select('category,question').order('created_at',{ascending:false}).limit(200);
+  if(!data||!data.length){document.getElementById('popular-list').innerHTML='<div class="empty-state" style="padding:20px">Belum ada data percakapan.</div>';return;}
+  const freq={};
+  data.forEach(r=>{const k=`${r.category}|||${r.question}`;freq[k]=(freq[k]||0)+1;});
+  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  if(!sorted.length){document.getElementById('popular-list').innerHTML='<div class="empty-state" style="padding:20px">Belum ada data.</div>';return;}
+  document.getElementById('popular-list').innerHTML=sorted.map(([key,count],i)=>{
+    const [cat,q]=key.split('|||');
+    const catInfo=CATS[cat]||CATS.elec;
+    return `<div class="popular-item" onclick="openChat('${cat}');setTimeout(()=>{fillQ(${JSON.stringify(q)})},400)">
+      <span class="pop-rank">#${i+1}</span>
+      <span class="pop-cat ${cat}">${catInfo.icon}</span>
+      <span class="pop-q">${q.substring(0,80)}</span>
+      <span class="pop-count">${count}x</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== UTILS =====
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function toggleFaq(el){el.parentElement.classList.toggle('open');}
+
+init();
 </script>
 </body>
 </html>
