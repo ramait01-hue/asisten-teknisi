@@ -716,12 +716,15 @@ footer p{font-size:12px;color:var(--text3);}
       <div class="key-status" id="kstatus-openrouter"></div>
       <span class="model-lbl">Pilih Model (Gratis semua!)</span>
       <select class="model-select" id="model-openrouter">
-        <option value="deepseek/deepseek-chat-v3-0324:free">DeepSeek V3 — GRATIS ⭐ Terbaik</option>
-        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (Reasoning) — GRATIS</option>
-        <option value="meta-llama/llama-3.3-70b-instruct:free">LLaMA 3.3 70B — GRATIS</option>
-        <option value="qwen/qwen3-235b-a22b:free">Qwen3 235B — GRATIS</option>
-        <option value="google/gemma-3-27b-it:free">Gemma 3 27B — GRATIS</option>
-        <option value="mistralai/mistral-7b-instruct:free">Mistral 7B — GRATIS</option>
+        <option value="meta-llama/llama-3.3-70b-instruct:free">LLaMA 3.3 70B ⭐ — GRATIS (Paling Stabil)</option>
+        <option value="qwen/qwen3-235b-a22b:free">Qwen3 235B — GRATIS (Sangat Pintar)</option>
+        <option value="google/gemma-3-27b-it:free">Gemma 3 27B — GRATIS (Cepat)</option>
+        <option value="mistralai/mistral-7b-instruct:free">Mistral 7B — GRATIS (Ringan)</option>
+        <option value="qwen/qwen3-14b:free">Qwen3 14B — GRATIS</option>
+        <option value="deepseek/deepseek-chat-v3-0324:free">DeepSeek V3 — GRATIS (Kadang penuh)</option>
+        <option value="deepseek/deepseek-r1:free">DeepSeek R1 Reasoning — GRATIS (Kadang penuh)</option>
+        <option value="microsoft/phi-3-medium-128k-instruct:free">Phi-3 Medium — GRATIS</option>
+        <option value="openchat/openchat-7b:free">OpenChat 7B — GRATIS</option>
       </select>
       <button class="save-btn or-btn" onclick="saveKey('openrouter')">💾 Simpan & Aktifkan OpenRouter</button>
     </div>
@@ -899,7 +902,7 @@ const PROVIDERS={
   openrouter:{
     name:'OpenRouter',icon:'🟣',badge:'openrouter',
     getKey:()=>localStorage.getItem('tp-openrouter-key')||'',
-    getModel:()=>localStorage.getItem('tp-openrouter-model')||'deepseek/deepseek-chat-v3-0324:free',
+    getModel:()=>localStorage.getItem('tp-openrouter-model')||'meta-llama/llama-3.3-70b-instruct:free',
     storageKey:'tp-openrouter-key'
   }
 };
@@ -1047,7 +1050,7 @@ function openApiKey(tab){
   const gm=document.getElementById('model-groq');
   if(gm)gm.value=localStorage.getItem('tp-groq-model')||'llama-3.3-70b-versatile';
   const orm=document.getElementById('model-openrouter');
-  if(orm)orm.value=localStorage.getItem('tp-openrouter-model')||'deepseek/deepseek-chat-v3-0324:free';
+  if(orm)orm.value=localStorage.getItem('tp-openrouter-model')||'meta-llama/llama-3.3-70b-instruct:free';
   renderAllKeyStatus();
   document.getElementById('apikey-overlay').classList.add('open');
 }
@@ -1495,7 +1498,7 @@ async function callOpenRouter(text,onChunk,key){
     headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`,'HTTP-Referer':'https://teknispro.app','X-Title':'TeknisPro'},
     body:JSON.stringify(body),signal:abortCtrl.signal
   });
-  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||err.message||`HTTP ${res.status}`);}
+  if(!res.ok){const err=await res.json().catch(()=>({}));const msg=err.error?.message||err.message||('HTTP '+res.status);if(msg.includes('No endpoints')||msg.includes('no available'))throw new Error('Model OpenRouter tidak tersedia/penuh. Coba ganti model lain di pengaturan 🔑');throw new Error(msg);}
   return streamSSE(res,data=>data.choices?.[0]?.delta?.content||'',onChunk);
 }
 
